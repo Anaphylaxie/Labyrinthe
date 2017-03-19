@@ -4,14 +4,11 @@ var socket = io.connect('http://192.168.168.48:8080');//on se connecte au serveu
 window.addEventListener("DOMContentLoaded",function(){
 //on récupère l'user grace à l'attribut data-user passé au body
 
-
 /*
 var employe = new Employe();
-Employe.nom = "Binome";
+Employe.nom = "Test";
 alert(Employe.nom);
 */
-
-
 
 var user = document.getElementsByTagName("body")[0].getAttribute('data-user');
 var users;
@@ -87,18 +84,15 @@ function Boss(){
 	this.persY;
 	this.persX;
 	this.vitesse = 1
-	
 	this.listeDirections = ["Nord","Sud"];
 	this.direction = this.listeDirections[Math.floor(Math.random() * this.listeDirections.length)];
-
+	/* Dessiner le boss */
 	this.draw = function(g){
 		var imgDuBoss = new Image();
 		imgDuBoss.src = this.imgBoss;
 		g.drawImage(imgDuBoss,this.posX,this.posY,CASE-LINEWIDTH,CASE-LINEWIDTH);
 	}
-	
-
-
+	/* Animer le bosss */
 	this.move = function(){
 	switch(this.direction) {
 		case "Nord":
@@ -121,10 +115,12 @@ function Boss(){
 		}		
 		break;
 		case "Sud": 
-		alert("sud");	
-		
+			alert("sud");	
+	
 		//if(this.posX%CASE==0||this.posX%CASE>CASE-this.vitesse-1){
+		
 		if(monLab[this.posY*dim+this.posX].N>=0) {
+		
 			this.posY = this.posY-this.vitesse;
 		} else {
 			this.direction = this.listeDirections[Math.floor(Math.random() * this.listeDirections.length)];
@@ -139,11 +135,8 @@ function Boss(){
 		case "Ouest": 
 			//this.bossX=this.bossX-30;
 	}	
-		
-	// socket.emit("positionBoss", {"boss": {x:boss.posX, y:boss.posY } });
-	
-	//  socket.emit("positionBoss", {"boss": {x:boss.posX, y:boss.posY } });
-	
+	// Transmettre la position du boss 
+	socket.emit("positionBoss", {"boss": {x:boss.posX, y:boss.posY } });
 	}
 }
 
@@ -168,6 +161,8 @@ function Joueur(posX, posY, persX, persY){
      g.drawImage(imagePers,this.posX,this.posX,CASE-LINEWIDTH,CASE-LINEWIDTH);
   }
   //méthode pour gérer le mouvement du perso du joueur
+ 
+ 
  
 
 /* this.move = function(evt){
@@ -231,49 +226,38 @@ function Joueur(posX, posY, persX, persY){
 
 
 function sendLab(){
-  var requete = new XMLHttpRequest();
-  var url = "drawLab.php";
-  requete.open("GET",url,true);
-  requete.send();
-  requete.onreadystatechange = function(){
-    if((requete.readyState==4)&&(requete.status==200)){
-      monLab = requete.responseText;
-      socket.emit("laby",monLab);
-    }
-  }
+	var requete = new XMLHttpRequest();
+	var url = "drawLab.php";
+	requete.open("GET",url,true);
+	requete.send();
+	requete.onreadystatechange = function(){
+	if((requete.readyState==4)&&(requete.status==200)){
+	  monLab = requete.responseText;
+	  socket.emit("laby",monLab);
+	}
+	}
 }
 
 function getLab(){
-  dim = Math.floor(Math.sqrt(monLab.length));
-  console.log(dim);
-  persX2 = (dim-1)*CASE+LINEWIDTH;
-  persY2 = (dim-1)*CASE+LINEWIDTH;
-  
-  imageLabyrinthe();
-  
-  var persX1 = LINEWIDTH;
-  var persY1 = LINEWIDTH;
+	dim = Math.floor(Math.sqrt(monLab.length));
+	
+	persX2 = (dim-1)*CASE+LINEWIDTH;
+	persY2 = (dim-1)*CASE+LINEWIDTH;
 
-  joueur1 = new Joueur(persX1,persY1,persX1,persY1);
-  
+	imageLabyrinthe();
 
+	var persX1 = LINEWIDTH;
+	var persY1 = LINEWIDTH;
+	joueur1 = new Joueur(persX1,persY1,persX1,persY1);
   
-  /* INITIALISATION de la position du boss */
- // alert("bossPOSX"+boss.posX);
-
-   
-   boss.posX = (Math.floor((Math.random() * 20) + 1)*30) + 4;
-   boss.posY =(Math.floor((Math.random() * 20) + 1)*30) + 4;
-  
-  
-  //var bossX=(Math.floor((Math.random() * 20) + 1)*30) + 4;
-
+	/* INITIALISATION des coordonnees du boss */
+	boss.posX = (Math.floor((Math.random() * 20) + 1)*30) + 4;
+	boss.posY = (Math.floor((Math.random() * 20) + 1)*30) + 4;
+	// Envoie des coordonnes du boss. 
 	socket.emit("positionBoss", {"boss": {x:boss.posX, y:boss.posY } });
 
-  dessine();
+	dessine();
 }
-
-
 
 
 function dessine(){
@@ -283,36 +267,40 @@ function dessine(){
 	zoneDessin.height = dim*CASE+LINEWIDTH*2;
 	var g = zoneDessin.getContext("2d");
 	
-	
-	var boss = new Boss();
-  
 
-
-	//var imagePers1 = new Image();
 	var imagePers2 = new Image();
 	imagePers2.src = "asset/img/perso/megamanFace.png";
+	
 
-  
+	/* Au chargement */
     imgLab.onload = function(){
 	
 		g.drawImage(imgLab,0,0);
-		
 		g.drawImage(imgLab,joueur1.posX,joueur1.posY,CASE-LINEWIDTH,CASE-LINEWIDTH);
+		
+		boss.posX = (Math.floor((Math.random() * 20) + 1)*30) + 4;;
+		boss.posY = (Math.floor((Math.random() * 20) + 1)*30) + 4;;
+		
+		
 		joueur1.draw(g);
 		boss.draw(g);
-		//boss.move(g);
+		boss.move(g);
 	}
-	g.drawImage(imgLab,0,0);
-  
-	boss.posX = 0;
-	boss.posY = 0;
+	/* Après chargement */
+
+	g.drawImage(imgLab,joueur1.posX,joueur1.posY,CASE-LINEWIDTH,CASE-LINEWIDTH);
 	
-    boss.draw(g);
-    boss.move(g);
-  
+	boss.posX = (Math.floor((Math.random() * 20) + 1)*30) + 4;;
+	boss.posY = (Math.floor((Math.random() * 20) + 1)*30) + 4;;
+	
+	
+	joueur1.draw(g);
+	boss.draw(g);
+	boss.move(g);
+
+
 	imagePers2.onload = function(){
 		g.drawImage(imagePers2,persX2,persY2,CASE-LINEWIDTH,CASE-LINEWIDTH);
-		//g.drawImage(imagePers2,persX2,persY2,CASE-LINEWIDTH,CASE-LINEWIDTH);
 	}
 }
 
@@ -388,7 +376,7 @@ function ecouteurClavier(evt){
 
         if(monLab[index].O>=0)
           persX1 = persX1-vitesse;
-          //dessine();
+          dessine();
         break;
       case 38 :
         console.log("haut");
@@ -397,19 +385,19 @@ function ecouteurClavier(evt){
 
         if(monLab[index].N>=0)
           persY1 = persY1-vitesse;
-          //dessine();
+          dessine();
         break;
       case 39 :
         console.log("droite");
         if(monLab[index].E>=0)
           persX1 = persX1+vitesse;
-          //dessine();
+          dessine();
         break;
       case 40 :
         console.log("bas");
         if(monLab[index].S>=0)
           persY1 = persY1+vitesse;
-          //dessine();
+          dessine();
         break;
     }
  }  else {
