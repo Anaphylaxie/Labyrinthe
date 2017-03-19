@@ -102,23 +102,12 @@ function Boss(){
 	this.move = function(){
 	switch(this.direction) {
 		case "Nord":
-			
 		alert("nord");	
+		
 		/* this.persY= Math.ceil(this.posY/CASE);
 		this.persX= Math.ceil(this.posX/CASE); 
 		if(monLab[this.persY*dim+this.persX].N>=0){ */
-		
-		/*
-		socket.on("positionBoss", function(pos){
-		
-			this.posX = pos.boss.x;
-			this.posY = pos.boss.y;
-			
-		 })
-		 */
-		 
-		
-		//if(monLab[this.posX].N>=0){
+
 		if(monLab[this.posY*dim+this.posX].N>=0) {
 			alert('pas de mur.');
 			this.posY = this.posY-this.vitesse;
@@ -128,7 +117,7 @@ function Boss(){
 			alert('mur au dessus');
 			this.direction = this.listeDirections[Math.floor(Math.random() * this.listeDirections.length)];
 			alert(this.direction);
-			//this.move();  <---------- PROBLEME ------------>
+			//this.move(); 
 		}		
 		break;
 		case "Sud": 
@@ -152,7 +141,8 @@ function Boss(){
 	}	
 		
 	// socket.emit("positionBoss", {"boss": {x:boss.posX, y:boss.posY } });
-	 //  socket.emit("positionBoss", {"boss": {x:boss.posX, y:boss.posY } });
+	
+	//  socket.emit("positionBoss", {"boss": {x:boss.posX, y:boss.posY } });
 	
 	}
 }
@@ -274,10 +264,7 @@ function getLab(){
    
    boss.posX = (Math.floor((Math.random() * 20) + 1)*30) + 4;
    boss.posY =(Math.floor((Math.random() * 20) + 1)*30) + 4;
-   
-
-
-  //
+  
   
   //var bossX=(Math.floor((Math.random() * 20) + 1)*30) + 4;
 
@@ -299,10 +286,7 @@ function dessine(){
 	
 	var boss = new Boss();
   
-	imgLab.onload = function(){
-		g.drawImage(imgLab,0,0);
-	}
-	g.drawImage(imgLab,0,0);
+
 
 	//var imagePers1 = new Image();
 	var imagePers2 = new Image();
@@ -311,16 +295,17 @@ function dessine(){
   
     imgLab.onload = function(){
 	
-		//g.drawImage(imgLab,0,0);
+		g.drawImage(imgLab,0,0);
 		
 		g.drawImage(imgLab,joueur1.posX,joueur1.posY,CASE-LINEWIDTH,CASE-LINEWIDTH);
 		joueur1.draw(g);
 		boss.draw(g);
 		//boss.move(g);
 	}
+	g.drawImage(imgLab,0,0);
   
 	boss.posX = 0;
-	boss.posY=0;
+	boss.posY = 0;
 	
     boss.draw(g);
     boss.move(g);
