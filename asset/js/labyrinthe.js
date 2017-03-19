@@ -219,85 +219,99 @@ this.move = function(evt){
     
   }
 
-  
-  function Joueur(posX, posY, persX, persY){
-  this.persPosX;
-  this.persPosY;
-  this.posX = posX;
-  this.posY = posY;
-  this.persX = persX;
-  this.persY = persY;
-  this.vitesse = 10;
-  this.spriteSrc = "asset/img/perso/megamanFace.png";
-  
-  this.draw = function(g){
-    var imagePers = new Image();
-    imagePers.src = this.spriteSrc;
-    imagePers.onload = function(){
-      //console.log("chargement image joueur")
-      g.drawImage(imagePers,this.posX,this.posX,CASE-LINEWIDTH,CASE-LINEWIDTH);
-	 // g.drawImage(imgDuBoss,this.posX,this.posY,CASE-LINEWIDTH,CASE-LINEWIDTH);
-    }
-     g.drawImage(imagePers,this.posX,this.posX,CASE-LINEWIDTH,CASE-LINEWIDTH);
-  }
-  //méthode pour gérer le mouvement du perso du joueur
- 
+function Joueur(posX, posY, persX, persY){
+	this.persPosX;
+	this.persPosY;
+	this.posX = posX;
+	this.posY = posY;
+	this.persX = persX;
+	this.persY = persY;
+	this.vitesse = 10;
+	this.spriteSrc = "asset/img/perso/megamanFace.png";
 
-this.move = function(evt){
-    switch(evt){
-			case 37 :
-				//console.log("gauche");
-				//on arrondit à la case d'au dessus pour ne s'arréter que lorsqu'on arrive à la bonne case
-				alert("gauche");
-				this.persY= Math.ceil(this.posY/CASE);
-				this.persX= Math.ceil(this.posX/CASE);
-        //console.log("x : "+persX1+", y : "+persY1)
-        //console.log("x : "+posX1+", y : "+posY1)
-        //console.log(posY1%CASE)
-				//on vérifie que le mouvement précédent est bien terminé sur une case
-				if(this.posY%CASE==0||this.posY%CASE>CASE-this.vitesse-1){
-					if(monLab[this.persY*dim+this.persX].O>=0)
-						this.posX = this.posX-this.vitesse;
-				}
-				break;
-			case 38 :
-				//console.log("haut");
-				//on arrondit à la case d'au dessus pour ne s'arréter que lorsqu'on arrive à la bonne case
-				this.persY= Math.ceil(this.posY/CASE);
-				this.persX= Math.ceil(this.posX/CASE);
-				//on vérifie que le mouvement précédent est bien terminé sur une case
-				if(this.posX%CASE==0||this.posX%CASE>CASE-this.vitesse-1){
-					if(monLab[this.persY*dim+this.persX].N>=0)
-						this.posY = this.posY-this.vitesse;
-				}
-				break;
-			case 39 :
-				//console.log("droite");
-				//on arrondit à la case d'en dessous pour ne s'arréter que lorsqu'on arrive à la bonne case
-				this.persY= Math.trunc(this.posY/CASE);
-				this.persX= Math.trunc(this.posX/CASE);
-				//on vérifie que le mouvement précédent est bien terminé sur une case
-				if(this.posY%CASE==0||this.posY%CASE>CASE-this.vitesse-1){
-					if(monLab[this.persY*dim+this.persX].E>=0)
-						this.posX = this.posX+this.vitesse;
-				}
-				break;
-			case 40 :
-				//console.log("bas");
-				//on arrondit à la case d'en dessous pour ne s'arréter que lorsqu'on arrive à la bonne case
-				this.persY= Math.trunc(this.posY/CASE);
-				this.persX= Math.trunc(this.posX/CASE);
-				//on vérifie que le mouvement précédent est bien terminé sur une case
-				if(this.posX%CASE==0||this.posX%CASE>CASE-this.vitesse-1){
-					if(monLab[this.persY*dim+this.persX].S>=0)
-						this.posY = this.posY+this.vitesse;
-				}
-				break;
+	this.draw = function(g){
+		var imagePers = new Image();
+		imagePers.src = this.spriteSrc;
+		imagePers.onload = function(){
+			g.drawImage(imagePers,this.posX,this.posY,CASE-LINEWIDTH,CASE-LINEWIDTH);
 		}
-    
-  }
-  
-  
+			g.drawImage(imagePers,this.posX,this.posY,CASE-LINEWIDTH,CASE-LINEWIDTH);
+	}
+
+	this.move = function(evt){
+		/* var imagePers = new Image();
+		imagePers.src = this.spriteSrc; */
+		
+		var zoneDessin = document.getElementById("labyrinthe");
+		zoneDessin.width = dim*CASE+LINEWIDTH*2;
+		zoneDessin.height = dim*CASE+LINEWIDTH*2;
+		var g = zoneDessin.getContext("2d");
+
+
+		var posX = (persX1 - LINEWIDTH)/CASE;
+		var posY = (persY1 - LINEWIDTH)/CASE;
+		var roundX = Math.floor(posX);
+		var roundY = Math.floor(posY);
+		var index = roundY*dim+roundX;
+
+		switch(evt){
+		case 37 :
+			this.persY= Math.ceil(this.posY/CASE);
+			this.persX= Math.ceil(this.posX/CASE);
+
+			console.log("gauche");
+			console.log(this.posX);
+			
+			roundX = Math.ceil(posX);
+			index = roundY*dim+roundX;
+			
+			if(monLab[index].O>=0){
+				this.posX = this.posX-10;
+				console.log('ouii?');	 
+				dessine();				
+			}
+			else{
+				dessine();		
+			}
+			//}	
+			break;
+			
+		case 38 :
+			alert("haut");
+			
+			this.persY= Math.ceil(this.posY/CASE);
+			this.persX= Math.ceil(this.posX/CASE);
+
+			//on vérifie que le mouvement précédent est bien terminé sur une case
+
+			console.log("haut");
+			roundY = Math.ceil(posY);
+			index = roundY*dim+roundX;
+			
+			if(monLab[index].N>=0){
+				this.posY = this.posY-30;
+				dessine();
+			}
+			dessine();	
+			break;
+		case 39 :
+			alert("droite");
+			if(monLab[index].E>=0){
+			  this.posX = this.posX+30;
+			  dessine();
+			}
+
+
+			break;
+		case 40 :
+		alert("bas");
+		if(monLab[index].S>=0){
+			this.posY = this.posY+30;
+			dessine();
+		}
+		break;
+		}
+	}  
 }
   
 function sendLab(){
@@ -381,13 +395,10 @@ function dessine(){
 		g.drawImage(imgLab,joueur1.posX,joueur1.posY,CASE-LINEWIDTH,CASE-LINEWIDTH);
 		
 
-		
 		joueur1.draw(g);
-		
 		joueur2.draw(g);
-		//boss.draw(g);
-		boss2.draw(g);
 		
+		boss2.draw(g);
 		boss2.move(g);
 		
 
@@ -402,16 +413,12 @@ function dessine(){
 	g.drawImage(imgLab,joueur1.posX,joueur1.posY,CASE-LINEWIDTH,CASE-LINEWIDTH);
 	
 	
-	//posX = (Math.floor((Math.random() * 20) + 1)*30) + 4;;
-	//posY = (Math.floor((Math.random() * 20) + 1)*30) + 4;;
-	
-	//boss.posX = (Math.floor((Math.random() * 20) + 1)*30) + 4;;
-	//boss.posY = (Math.floor((Math.random() * 20) + 1)*30) + 4;;
 
-	
+
 	joueur2.draw(g);
 	joueur1.draw(g);
 	boss2.move(g);
+	
 	//boss.draw(g);
 	//boss.move(g);
 
@@ -465,8 +472,6 @@ function imageLabyrinthe(){
 var vitesse = 5;
 
 function ecouteurClavier(evt){
-	alert('passe ici');
-	console.log('passeIici');
 	if (users.indexOf(user)%2==0){
 		joueur1.move(evt.keyCode);
 	} else {
