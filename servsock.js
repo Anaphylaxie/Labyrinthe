@@ -5,6 +5,9 @@ var url = require('url');
 var users = new Array();
 var laby = "";
 
+const positionXTest = Math.floor((Math.random() * 15) + 1);
+const positionYTest = Math.floor((Math.random() * 15) + 1);
+
 // Chargement du fichier index.html affiché au client
 var server = http.createServer(function(query, result) {
 	var page = url.parse(query.url).pathname;
@@ -37,7 +40,6 @@ io.sockets.on('connection', function (socket) {
 			 console.log(users);
     	})
 
-
 	socket.on('liste',function (msg) {
 		console.log("envoi liste");
 			console.log(users);
@@ -52,34 +54,41 @@ io.sockets.on('connection', function (socket) {
 		socket.emit("laby",laby);
 		socket.broadcast.emit("laby",laby);
 	});
-	
-	
-	
+
 	socket.on('position',function (pos) {
 		console.log("envoi des positions des joueurs");
 		console.log(pos);
 		socket.emit("position",pos);
 		socket.broadcast.emit("position",pos);
 	});
-	
-	
-	
-	/* La position du boss */ 
+
+
+
+	/* La position du boss */
 	socket.on('positionBoss',function (pos) {
 		console.log(pos);
-	//pos=pos;
-		console.log("envoi du boss");
+		//pos=pos;
+		console.log("envoi du boss (positionBoss) ");
 		socket.emit("position du boss",pos);
 		socket.broadcast.emit("position Boss",pos);
-		
 	});
-	
+
 	socket.on('positionLapin',function (pos) {
 		//console.log("envoi des positions du lapin aux joueurs");
 		//console.log(pos);
 		socket.emit("positionLapin",pos);
 		socket.broadcast.emit("positionLapin",pos);
 	});
+
+	socket.on('positionBossTest',function (positionX,positionY) {
+		positionX = positionXTest;
+		positionY = positionYTest;
+		console.log("envoi du boss (positionBoss) ");
+		socket.emit("positionBossTest",positionX,positionY);
+		socket.broadcast.emit("positionBossTest",positionX,positionY);
+	});
+	
+	
 	
 	socket.on('bonus', function (bonus) {
 		console.log("envoi des positions des bonus aux joueurs");
